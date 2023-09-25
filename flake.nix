@@ -1,5 +1,5 @@
 {
-  description = "NixOS configuration of Ryan Yin";
+  description = "NixOS configuration of paris Yin";
 
   # flake 为了确保够纯，它不依赖系统自身的 /etc/nix/nix.conf，而是在 flake.nix 中通过 nixConfig 设置
   # 但是为了确保安全性，flake 默认仅允许直接设置少数 nixConfig 参数，其他参数都需要在执行 nix 命令时指定 `--accept-flake-config`，否则会被忽略
@@ -11,7 +11,7 @@
     experimental-features = [ "nix-command" "flakes" ];
     substituters = [
       # replace official cache with a mirror located in China
-      "https://mirrors.bfsu.edu.cn/nix-channels/store"
+
       "https://cache.nixos.org/"
     ];
 
@@ -82,30 +82,12 @@
 
             # 使用 home-manager.extraSpecialArgs 自定义传递给 ./home 的参数
             home-manager.extraSpecialArgs = inputs;
-            home-manager.users.ryan = import ./home;
+            home-manager.users.paris = import ./home;
           }
         ];
       };
 
-      msi-rtx4090 = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
 
-        modules = [
-          ./hosts/msi-rtx4090
-
-          # home-manager 作为 nixos 的一个 module
-          # 这样在 nixos-rebuild switch 时，home-manager 也会被自动部署，不需要额外执行 home-manager switch 命令
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-
-            # 使用 home-manager.extraSpecialArgs 自定义传递给 ./home 的参数
-            home-manager.extraSpecialArgs = inputs;
-            home-manager.users.ryan = import ./home;
-          }
-        ];
-      };
 
 
       # 如果你在 x86_64-linux 平台上执行 nix build，那么默认会使用这个配置，或者也能通过 `.#<name>` 参数来指定非 default 的配置
